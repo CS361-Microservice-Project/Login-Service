@@ -9,7 +9,7 @@ import time
 # CONFIG: Basic settings for lockout behavior.
 # MAX_ATTEMPTS is how many failed tries are allowed before locking.
 # LOCK_SECONDS is how long the account stays locked after too many failed tries.
-MAX_ATTEMPTS = 5
+MAX_ATTEMPTS = 3
 LOCK_SECONDS = 60
 
 
