@@ -1,5 +1,5 @@
 # Login Microservice - A REST microservice for validating username/password logins with a lockout policy.
-# Uses Flask + hashlib (simple SHA-256 hashing). No extra packages needed besides Flask.
+# Uses Flask + hashlib
 
 from flask import Flask, request, jsonify
 import hashlib
@@ -22,7 +22,7 @@ def hash_password(password):
     return hashlib.sha256(password.encode("utf-8")).hexdigest()
 
 
-# USERS: A fake "database" of accounts for this assignment.
+# USERS: Database of accounts for this assignment.
 # IMPORTANT: Passwords are stored as hashes, not plain text.
 USERS = {
     "user1": hash_password("mypassword"),
