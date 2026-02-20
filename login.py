@@ -3,7 +3,25 @@
 
 from flask import Flask, request, jsonify
 import hashlib
+import json
 import time
+
+
+class loginRecC:
+    def __init__(self, user: str, pword: str):
+        self.user = user
+        self.pword = pword
+    def toDict(self):
+        return self.__dict__
+
+
+jsonFile = "login-records.json"
+
+
+def saveLogin(loginLst):
+    data = [l.toDict() for l in loginLst]
+    with open(jsonFile, "w") as f:
+        json.dump(data, f, indent=4)
 
 
 # CONFIG: Basic settings for lockout behavior.
@@ -13,21 +31,35 @@ MAX_ATTEMPTS = 3
 LOCK_SECONDS = 60
 
 
-# hash_password: Converts a plain password into a SHA-256 hex hash string.
-# Prerequisites: password is a string.
-# Arguments: password (str).
-# Returns: str, a hex hash of the password.
-def hash_password(password):
+def hash_password(pword: str):
+    """
+    hash_password: Converts a plain password into a SHA-256 hex hash string.\n
+    Prerequisites: pword is a string.\n
+    Arguments: pword (str).\n
+    Returns: str, a hex hash of the password. 
+    """
     # Encode the string as bytes, hash it, then convert to hex text.
-    return hashlib.sha256(password.encode("utf-8")).hexdigest()
+    return hashlib.sha256(pword.encode("utf-8")).hexdigest()
 
 
-# USERS: Database of accounts for this assignment.
+# logs: Database of accounts for this assignment.
 # IMPORTANT: Passwords are stored as hashes, not plain text.
-USERS = {
-    "user1": hash_password("mypassword"),
-    "admin": hash_password("letmein123")
-}
+with open(jsonFile, "r") as f:
+    data = json.load(f)
+    logs = [loginRecC(**d) for d in data]
+
+
+def addPword(user: str, pword: str):
+    """
+    addPword: Updates a loginRecC with a hashed password.\n
+    Prerequisites: None.\n
+    Arguments: user (str); pword (str)\n
+    Returns: Nothing, updates log if user matches.
+    """
+    for log in logs:
+        if log.user == user:
+            log.pword = hash_password(pword)
+            print(f"hashed pword is {log.pword}")
 
 
 # failed_attempts: Tracks how many bad password attempts each username has.
@@ -139,7 +171,10 @@ def login():
 
     # Find the stored hash for this username.
     # If username does not exist, treat it like invalid credentials (do not reveal existence).
-    stored_hash = USERS.get(username)
+    stored_hash = None
+    for log in logs:
+        if log.user == username:
+            stored_hash = log.pword
 
     # If user is missing, count it as a failed attempt and return invalid credentials or locked.
     if stored_hash is None:
