@@ -215,6 +215,55 @@ def login():
     return jsonify({"status": "ok"}), 200
 
 
+# ----- Functions for creating new user account -----
+def user_exists(username):
+    for log in logs:
+        if log.user == username:
+            return True
+
+    return False
+
+def create_account(username, password):
+
+    # Validate username and password format
+    if not is_valid_format(username, password):
+        return "invalid_format"
+
+    # Check if user exists
+    if user_exists(username):
+        return "user_already_exists"
+
+    new_user = loginRecC(username, hash_password(password))
+    logs.append(new_user)
+    save_login(logs)
+
+    reset_user_state(username)
+
+    return "new_user_created"
+
+@app.post("/create-account")
+def create_account_route():
+    # Get the JSON body. silent=True means it returns None instead of throwing an error.
+    data = request.get_json(silent=True)
+
+    # If the body isn't a JSON object, return invalid_format.
+    if type(data) is not dict:
+        return jsonify({"status": "invalid_format"}), 400
+
+    # Pull username and password out of the JSON.
+    username = data.get("username")
+    password = data.get("password")
+
+    res = create_account(username, password)
+
+    if res == "new_user_created":
+        return jsonify({"status": "created"}), 201
+    elif res == "user_already_exists":
+        return jsonify({"status": "user_exists"}), 409
+    elif res == "invalid_format":
+        return jsonify({"status": "invalid_format"}), 400
+    else:
+        return jsonify({"status": "error"}), 500
 
 def main():
     """
