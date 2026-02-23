@@ -65,4 +65,37 @@ Validation Rules
 ```bash
 curl -X POST http://127.0.0.1:5000/create-account \
   -H "Content-Type: application/json" \
-  -d '{"username":"alice","password":"password123"}'
+  -d '{"username":"erwin","password":"password123"}'
+```
+
+## How to Receive Data
+
+The microservice responds with:
+
+- An HTTP status code
+- A JSON response body in the format:
+
+```json
+{ "status": "<value>" }
+```
+
+## Example Call for Receiving Data
+
+```python
+import requests
+
+response = requests.post(
+    "http://127.0.0.1:5000/create-account",
+    json={"username": "erwin", "password": "password123"}
+)
+
+# Handling the response
+if response.status_code == 201:
+    print("Account created successfully")
+elif response.status_code == 409:
+    print("User already exists")
+elif response.status_code == 400:
+    print("Invalid request format")
+else:
+    print("Server error")
+```
