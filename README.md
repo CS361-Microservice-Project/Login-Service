@@ -40,10 +40,16 @@ Creates a new user account.
 
 ---
 
-## Request (How to request data)
+## How to Request Data
 
-**Method:** `POST`  
-**Path:** `/create-account`  
+Send a POST request to: `http://127.0.0.1:5000/create-account`
+**Method:** POST  
+**Header:** `Content-Type: application/json`
+
+Validation Rules
+- Username must be a string (3–32 characters)
+- Password must be a string (1–72 characters)
+- The body must be a valid JSON object
 
 ### JSON Body
 
@@ -52,3 +58,10 @@ Creates a new user account.
   "username": "new_user",
   "password": "new_password"
 }
+
+## Example Call for Requesting Data
+
+```bash
+curl -X POST http://127.0.0.1:5000/create-account \
+  -H "Content-Type: application/json" \
+  -d '{"username":"alice","password":"password123"}'
