@@ -79,6 +79,11 @@ The microservice responds with:
 { "status": "<value>" }
 ```
 
+The main program should:
+  - Check the HTTP status code.
+  - Parse the JSON response.
+  -  Use the "status" value to determine the appropriate action.
+
 ## Example Call for Receiving Data
 
 ```python
@@ -98,4 +103,75 @@ elif response.status_code == 400:
     print("Invalid request format")
 else:
     print("Server error")
+```
+
+# Endpoint: POST /login
+
+## How to Request Data
+
+Send a POST request to: `http://127.0.0.1:5000/login`
+**Method:** POST  
+**Header:** `Content-Type: application/json`
+
+Validation Rules
+- Username must be a string (3–32 characters)
+- Password must be a string (1–72 characters)
+- The body must be a valid JSON object
+
+### JSON Body
+
+```json
+{
+  "username": "existing_user",
+  "password": "user_password"
+}
+```
+
+## Example Call for Requesting Data
+
+```bash
+curl -X POST http://127.0.0.1:5000/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"erwin","password":"password123"}'
+```
+
+## How to Receive Data
+
+The `/login` endpoint returns:
+
+- An HTTP status code
+- A JSON response body
+
+The response body follows this format:
+
+```json
+{ "status": "<value>" }
+```
+
+The main program should:
+  - Check the HTTP status code.
+  - Parse the JSON response.
+  -  Use the "status" value to determine the appropriate action.
+
+## Example Call for Receiving Data
+
+```python
+import requests
+
+response = requests.post(
+    "http://127.0.0.1:5000/login",
+    json={"username": "erwin", "password": "password123"}
+)
+
+data = response.json()
+status = data.get("status")
+
+if status == "ok":
+    print("Login successful")
+elif status == "locked":
+    print("Account is locked")
+elif status == "invalid_format":
+    print("Invalid request format")
+else:
+    print("Login failed")
 ```
