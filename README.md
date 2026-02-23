@@ -58,6 +58,7 @@ Validation Rules
   "username": "new_user",
   "password": "new_password"
 }
+```
 
 ## Example Call for Requesting Data
 
