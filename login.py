@@ -8,9 +8,9 @@ import time
 
 
 class loginRecC:
-    def __init__(self, user: str, pword: str):
-        self.user = user
-        self.pword = pword
+    def __init__(self, username: str, password: str):
+        self.user = username
+        self.pword = password
     def toDict(self):
         return self.__dict__
 
@@ -274,7 +274,7 @@ def main():
     """
     # debug=False so it behaves more like a normal service.
     # host="127.0.0.1" means local machine only (not open to the internet).
-    app.run(host="127.0.0.1", port=5001, debug=False)
+    app.run(host="127.0.0.1", port=5000, debug=False)
 
 
 main()

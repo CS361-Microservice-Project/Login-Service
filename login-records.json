@@ -1,14 +1,14 @@
 [
     {
-        "user": "user1",
-        "pword": "89e01536ac207279409d4de1e5253e01f4a1769e696db0d6062ca9b8f56767c8"
+        "username": "user1",
+        "password": "89e01536ac207279409d4de1e5253e01f4a1769e696db0d6062ca9b8f56767c8"
     },
     {
-        "user": "admin",
-        "pword": "9b0eb22aef89516d6fb4b31ccf008a68abe0d10a3fc606316389613eccf96854"
+        "username": "admin",
+        "password": "9b0eb22aef89516d6fb4b31ccf008a68abe0d10a3fc606316389613eccf96854"
     },
     {
-        "user": "erwin",
-        "pword": "ecd71870d1963316a97e3ac3408c9835ad8cf0f3c1bc703527c30265534f75ae"
+        "username": "erwin",
+        "password": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f"
     }
 ]
