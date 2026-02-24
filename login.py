@@ -9,8 +9,8 @@ import time
 
 class loginRecC:
     def __init__(self, username: str, password: str):
-        self.user = username
-        self.pword = password
+        self.username = username
+        self.password = password
     def toDict(self):
         return self.__dict__
 
@@ -63,8 +63,8 @@ def addPword(user: str, pword: str):
     Returns: Nothing, updates log if user matches.
     """
     for log in logs:
-        if log.user == user:
-            log.pword = hash_password(pword)
+        if log.username == user:
+            log.password = hash_password(pword)
             print(f"hashed pword is {log.pword}")
 
 
@@ -191,8 +191,8 @@ def login():
     # If username does not exist, treat it like invalid credentials (do not reveal existence).
     stored_hash = None
     for log in logs:
-        if log.user == username:
-            stored_hash = log.pword
+        if log.username == username:
+            stored_hash = log.password
 
     # If user is missing, count it as a failed attempt and return invalid credentials or locked.
     if stored_hash is None:
@@ -218,7 +218,7 @@ def login():
 # ----- Functions for creating new user account -----
 def user_exists(username):
     for log in logs:
-        if log.user == username:
+        if log.username == username:
             return True
 
     return False
