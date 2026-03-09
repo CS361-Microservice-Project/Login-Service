@@ -15,6 +15,12 @@ class loginRecC:
         return self.__dict__
 
 
+# For use in create_account_route()
+creation_statuses = {201: {"status": "created"},
+                     400: {"status": "invalid_format"},
+                     409: {"status": "user_exists"}}
+
+
 jsonfile = "login-records.json"
 
 
@@ -84,7 +90,6 @@ locked_until = {}
 app = Flask(__name__)
 
 
-
 def is_valid_format(username, password):
     """
     is_valid_format: Checks whether username and password are valid types and acceptable lengths.\n
@@ -112,7 +117,8 @@ def is_locked(username):
     is_locked: Checks whether a user is currently locked out.\n
     Prerequisites: username is a string.\n
     Arguments: username (str).\n
-    Returns: bool, True if locked; False if not locked."""
+    Returns: bool, True if locked; False if not locked.
+    """
     # Get the lock time for this user. If it doesn't exist, treat it as 0.
     lock_time = locked_until.get(username, 0)
 
@@ -143,7 +149,6 @@ def record_failed_attempt(username):
     return "invalid_credentials"
 
 
-
 def reset_user_state(username):
     """
     reset_user_state: Clears failed attempts and lock state for a user after a successful login.\n
@@ -156,7 +161,6 @@ def reset_user_state(username):
 
     # Set locked_until to 0 so the user is not locked.
     locked_until[username] = 0
-
 
 
 @app.post("/login")
@@ -223,15 +227,21 @@ def user_exists(username):
 
     return False
 
-def create_account(username, password):
 
+def create_account(username, password):
+    """
+    create_account: Creates a new login record.\n
+    Prerequisites: logs is open and can be written to.\n
+    Arguments: username (str), password (str).\n
+    Returns: status, an integer with the HTML status code of the response.
+    """
     # Validate username and password format
     if not is_valid_format(username, password):
-        return "invalid_format"
+        return 400
 
     # Check if user exists
     if user_exists(username):
-        return "user_already_exists"
+        return 409
 
     new_user = loginRecC(username, hash_password(password))
     logs.append(new_user)
@@ -239,10 +249,18 @@ def create_account(username, password):
 
     reset_user_state(username)
 
-    return "new_user_created"
+    return 201
+
 
 @app.post("/create-account")
 def create_account_route():
+    """
+    create_account_route: Endpoint for POST /create-account. Validates request, attempts to create user, and returns JSON status.\n
+    Prerequisites: Request must be JSON with keys "username" and "password".\n
+    Arguments: None (uses Flask request).\n
+    Returns: Flask response (JSON) with one of these status values:\n
+    "created", "user_exists", "invalid_format", "error"
+    """
     # Get the JSON body. silent=True means it returns None instead of throwing an error.
     data = request.get_json(silent=True)
 
@@ -256,15 +274,13 @@ def create_account_route():
 
     res = create_account(username, password)
 
-    if res == "new_user_created":
-        return jsonify({"status": "created"}), 201
-    elif res == "user_already_exists":
-        return jsonify({"status": "user_exists"}), 409
-    elif res == "invalid_format":
-        return jsonify({"status": "invalid_format"}), 400
+    if res in creation_statuses:
+        return jsonify(creation_statuses[res]), res
     else:
         return jsonify({"status": "error"}), 500
 
+
+# ----- Main -----
 def main():
     """
     main: Starts the Flask server on localhost port 5001.\n
@@ -277,4 +293,5 @@ def main():
     app.run(host="127.0.0.1", port=5000, debug=False)
 
 
-main()
+if __name__ == '__main__':
+    main()
